@@ -16,5 +16,6 @@ namespace _2017AS603_2016AR602
         public DbSet<materias> materias { get; set; }
         public DbSet<alumnos> alumnos { get; set; }
         public DbSet<inscripciones> inscripciones { get; set; }
+        public DbSet<notas> notas { get; set; }
     }
 }

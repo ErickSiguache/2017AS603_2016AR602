@@ -69,5 +69,62 @@ namespace _2017AS603_2016AR602.Controllers
             }
             return NotFound();
         }
+
+        /// <summary>
+        /// Insertar inscripciones
+        /// </summary>
+        /// <param name="inscripcionesNuevo"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("api/inscripciones")]
+        public IActionResult guardarInscripciones([FromBody] inscripciones inscripcionesNuevo)
+        {
+            try
+            {
+                IEnumerable<inscripciones> inscripcionesExiste = from e in _contexto.inscripciones
+                                                      where e.materiaId == inscripcionesNuevo.materiaId
+                                                      && e.alumnoId == inscripcionesNuevo.alumnoId
+                                                      select e;
+                if (inscripcionesExiste.Count() == 0)
+                {
+                    _contexto.inscripciones.Add(inscripcionesNuevo);
+                    _contexto.SaveChanges();
+                    return Ok(inscripcionesNuevo);
+                }
+                return Ok(inscripcionesExiste);
+            }
+            catch (System.Exception)
+            {
+                return BadRequest();
+            }
+        }
+
+        /// <summary>
+        /// Modificar inscripciones
+        /// </summary>
+        /// <param name="inscripcionesAModificar"></param>
+        /// <returns></returns>
+        [HttpPut]
+        [Route("api/inscripciones")]
+        public IActionResult updateInscripciones([FromBody] inscripciones inscripcionesAModificar)
+        {
+            inscripciones inscripcionesExiste = (from e in _contexto.inscripciones
+                                     where e.id == inscripcionesAModificar.id
+                                     select e).FirstOrDefault();
+            if (inscripcionesExiste is null)
+            {
+                return NotFound();
+            }
+            inscripcionesExiste.alumnoId = inscripcionesAModificar.alumnoId;
+            inscripcionesExiste.materiaId = inscripcionesAModificar.materiaId;
+            inscripcionesExiste.inscripcion = inscripcionesAModificar.inscripcion;
+            inscripcionesExiste.fecha = inscripcionesAModificar.fecha;
+            inscripcionesExiste.estado = inscripcionesAModificar.estado;
+
+            _contexto.Entry(inscripcionesExiste).State = EntityState.Modified;
+            _contexto.SaveChanges();
+
+            return Ok(inscripcionesExiste);
+        }
     }
 }
